@@ -1,23 +1,30 @@
-from fastapi import FastAPI
-
-from app.api.alerts_api import router as alerts_router
-from app.api.chat_api import router as chat_router
-from app.api.health_api import router as health_router
-from app.api.report_api import router as reports_router
-
-app = FastAPI(
-    title="SentinelGPT",
-    version="1.0.0"
-)
-
-app.include_router(alerts_router, prefix="/api", tags=["Alerts"])
-app.include_router(chat_router, prefix="/api", tags=["Chat"])
-app.include_router(health_router, prefix="/api", tags=["Health"])
-app.include_router(reports_router, prefix="/api", tags=["Reports"])
+from app.rag.document_loader import DocumentLoader
 
 
-@app.get("/")
-def root():
-    return {
-        "message": "SentinelGPT API Running"
-    }
+def main():
+
+    print("=" * 50)
+    print("SentinelGPT RAG Document Loader Test")
+    print("=" * 50)
+
+    loader = DocumentLoader()
+
+    documents = loader.load_all_documents()
+
+    print(f"\nLoaded Documents: {len(documents)}")
+
+    if len(documents) > 0:
+
+        print("\nFirst Document:")
+        print("-" * 50)
+        print(documents[0])
+
+    else:
+
+        print("\nNo documents found.")
+
+    print("\nTest Completed Successfully")
+
+
+if __name__ == "__main__":
+    main()
