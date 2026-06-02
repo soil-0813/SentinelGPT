@@ -1,3 +1,11 @@
+"""
+Log loader module for aggregating logs from multiple sources.
+
+This module provides functionality to load and consolidate log entries from
+multiple JSON log files. It includes error handling and detailed logging
+for monitoring the log loading process.
+"""
+
 from typing import List, Dict, Any
 import logging
 from pathlib import Path
@@ -24,8 +32,8 @@ def load_all_logs(
 
     Args:
         log_files: List of paths to JSON log files. If None, defaults to
-                  ['windows_logs.json']. Each file should contain a JSON
-                  array of log entry dictionaries.
+                  ['datasets/logs/windows_logs.json']. Each file should contain
+                  a JSON array of log entry dictionaries.
 
     Returns:
         List[Dict[str, Any]]: A consolidated list of all log entries from
@@ -41,7 +49,7 @@ def load_all_logs(
         >>> all_logs = load_all_logs()
         >>> len(all_logs)
         50
-        >>> all_logs = load_all_logs(['windows_logs.json', 'system_logs.json'])
+        >>> all_logs = load_all_logs(['datasets/logs/windows_logs.json', 'datasets/logs/system_logs.json'])
         >>> len(all_logs)
         120
     """
@@ -53,15 +61,18 @@ def load_all_logs(
     all_logs: List[Dict[str, Any]] = []
     successful_loads = 0
     failed_loads = 0
+    total_entries_loaded = 0
 
     for file_path in log_files:
         try:
             logger.info(f"Loading logs from: {file_path}")
             logs = read_windows_logs(file_path)
             all_logs.extend(logs)
+            entries_count = len(logs)
+            total_entries_loaded += entries_count
             successful_loads += 1
             logger.info(
-                f"Successfully loaded {len(logs)} entries from {file_path}"
+                f"Successfully loaded {entries_count} entries from {file_path}"
             )
 
         except FileNotFoundError as e:
@@ -87,15 +98,15 @@ if __name__ == "__main__":
     try:
         # Load from default file
         logs = load_all_logs()
-        print(f"Total logs loaded: {len(logs)}")
+        print(f"✓ Total logs loaded: {len(logs)}")
 
         # Example: Load from multiple files
         # multi_logs = load_all_logs([
-        #     "windows_logs.json",
-        #     "system_logs.json",
-        #     "application_logs.json"
+        #     "datasets/logs/windows_logs.json",
+        #     "datasets/logs/system_logs.json",
+        #     "datasets/logs/application_logs.json"
         # ])
-        # print(f"Total logs from multiple files: {len(multi_logs)}")
+        # print(f"✓ Total logs from multiple files: {len(multi_logs)}")
 
     except Exception as e:
-        print(f"Unexpected error: {type(e).__name__} - {str(e)}")
+        print(f"✗ Unexpected error: {type(e).__name__} - {str(e)}")
