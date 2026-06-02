@@ -1,29 +1,44 @@
-from app.rag.document_loader import DocumentLoader
+from app.rag.embedder import Embedder
 
 
 def main():
 
     print("=" * 50)
-    print("SentinelGPT RAG Document Loader Test")
+    print("SentinelGPT Embedder Test")
     print("=" * 50)
 
-    loader = DocumentLoader()
+    embedder = Embedder()
 
-    documents = loader.load_all_documents()
+    sample_text = (
+        "Brute force attack detected after "
+        "multiple failed login attempts."
+    )
 
-    print(f"\nLoaded Documents: {len(documents)}")
+    print("\nGenerating embedding...\n")
 
-    if len(documents) > 0:
+    embedding = embedder.embed_text(
+        sample_text
+    )
 
-        print("\nFirst Document:")
-        print("-" * 50)
-        print(documents[0])
+    print(
+        f"Embedding Dimension: {len(embedding)}"
+    )
 
-    else:
+    print(
+        f"Embedding Shape: {embedding.shape}"
+    )
 
-        print("\nNo documents found.")
+    print(
+        "\nFirst 10 Values:\n"
+    )
 
-    print("\nTest Completed Successfully")
+    print(
+        embedding[:10]
+    )
+
+    print(
+        "\nEmbedder Test Completed Successfully."
+    )
 
 
 if __name__ == "__main__":
