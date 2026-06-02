@@ -1,16 +1,16 @@
 """
-Log loader module for aggregating logs from multiple sources.
+SentinelGPT Log Loader
 
-This module loads and combines:
-- Windows Logs
-- Firewall Logs
-- IDS Alerts
+Loads logs from:
+1. Windows Logs
+2. Firewall Logs
+3. IDS Alerts
 
-into a single unified dataset.
+Combines everything into a single list for preprocessing.
 """
 
-from typing import List, Dict, Any
 import logging
+from typing import List, Dict, Any
 
 from .windows_logs import read_windows_logs
 from .firewall_logs import load_firewall_logs
@@ -27,66 +27,90 @@ logger = logging.getLogger(__name__)
 
 def load_all_logs() -> List[Dict[str, Any]]:
     """
-    Load all log sources and combine them into a single list.
+    Load all security logs from all available data sources.
 
     Returns:
-        List[Dict[str, Any]]:
-            Combined logs from Windows, Firewall and IDS sources.
+        Combined list containing:
+        - Windows events
+        - Firewall events
+        - IDS alerts
     """
 
-    logger.info("Starting SentinelGPT log collection")
-
-    all_logs: List[Dict[str, Any]] = []
+    all_logs = []
 
     successful_loads = 0
     failed_loads = 0
 
-    log_sources = [
-        (
-            "Windows Logs",
-            "datasets/logs/windows_logs.json",
-            read_windows_logs
-        ),
-        (
-            "Firewall Logs",
-            "datasets/logs/firewall_logs.json",
-            load_firewall_logs
-        ),
-        (
-            "IDS Alerts",
-            "datasets/logs/ids_alerts.json",
-            load_ids_alerts
+    logger.info("Starting SentinelGPT log collection")
+
+    # --------------------------
+    # WINDOWS LOGS
+    # --------------------------
+    try:
+        logger.info("Loading Windows Logs")
+
+        windows_logs = read_windows_logs(
+            "datasets/logs/windows_logs.json"
         )
-    ]
 
-    for source_name, file_path, loader_function in log_sources:
+        all_logs.extend(windows_logs)
 
-        try:
-            logger.info(f"Loading {source_name}")
+        logger.info(
+            f"Windows Logs: {len(windows_logs)} records loaded successfully"
+        )
 
-            logs = loader_function(file_path)
+        successful_loads += 1
 
-            all_logs.extend(logs)
+    except Exception as e:
+        logger.error(f"Windows Logs Error: {e}")
+        failed_loads += 1
 
-            successful_loads += 1
+    # --------------------------
+    # FIREWALL LOGS
+    # --------------------------
+    try:
+        logger.info("Loading Firewall Logs")
 
-            logger.info(
-                f"{source_name}: {len(logs)} records loaded successfully"
-            )
+        firewall_logs = load_firewall_logs(
+            "datasets/logs/firewall_logs.json"
+        )
 
-        except Exception as e:
+        all_logs.extend(firewall_logs)
 
-            failed_loads += 1
+        logger.info(
+            f"Firewall Logs: {len(firewall_logs)} records loaded successfully"
+        )
 
-            logger.error(
-                f"{source_name} failed: "
-                f"{type(e).__name__} - {str(e)}"
-            )
+        successful_loads += 1
+
+    except Exception as e:
+        logger.error(f"Firewall Logs Error: {e}")
+        failed_loads += 1
+
+    # --------------------------
+    # IDS ALERTS
+    # --------------------------
+    try:
+        logger.info("Loading IDS Alerts")
+
+        ids_alerts = load_ids_alerts(
+            "datasets/logs/ids_alerts.json"
+        )
+
+        all_logs.extend(ids_alerts)
+
+        logger.info(
+            f"IDS Alerts: {len(ids_alerts)} records loaded successfully"
+        )
+
+        successful_loads += 1
+
+    except Exception as e:
+        logger.error(f"IDS Alerts Error: {e}")
+        failed_loads += 1
 
     logger.info(
-        f"Log loading complete "
-        f"({successful_loads} succeeded, "
-        f"{failed_loads} failed)"
+        f"Log loading complete ({successful_loads} succeeded, {failed_loads} failed)"
     )
 
     logger.info(
@@ -100,10 +124,22 @@ if __name__ == "__main__":
 
     logs = load_all_logs()
 
-    print("\n========== SENTINELGPT TEST ==========")
+    print("\n========== TEST RESULTS ==========")
     print(f"Total records loaded: {len(logs)}")
 
-    print("\nFirst 5 records:\n")
+    windows_count = sum(
+        1 for log in logs if "username" in log
+    )
 
-    for log in logs[:5]:
-        print(log)
+    firewall_count = sum(
+        1 for log in logs if "destination_ip" in log
+    )
+
+    ids_count = sum(
+        1 for log in logs if "alert_type" in log
+    )
+
+    print("\nVerification:")
+    print(f"Windows Logs : {windows_count}")
+    print(f"Firewall Logs: {firewall_count}")
+    print(f"IDS Alerts   : {ids_count}")
