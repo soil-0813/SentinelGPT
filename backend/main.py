@@ -8,17 +8,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
-app.include_router(
-    alerts_router,
-    prefix="/api",
-    tags=["Alerts"]
-)
-
-app.include_router(
-    chat_router,
-    prefix="/api",
-    tags=["Chat"]
-)
+app.include_router(alerts_router, prefix="/api", tags=["Alerts"])
+app.include_router(chat_router, prefix="/api", tags=["Chat"])
 
 @app.get("/")
 def root():
