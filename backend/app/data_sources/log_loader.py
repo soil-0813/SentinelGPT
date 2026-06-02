@@ -1,112 +1,109 @@
 """
 Log loader module for aggregating logs from multiple sources.
 
-This module provides functionality to load and consolidate log entries from
-multiple JSON log files. It includes error handling and detailed logging
-for monitoring the log loading process.
+This module loads and combines:
+- Windows Logs
+- Firewall Logs
+- IDS Alerts
+
+into a single unified dataset.
 """
 
 from typing import List, Dict, Any
 import logging
-from pathlib import Path
 
 from .windows_logs import read_windows_logs
+from .firewall_logs import load_firewall_logs
+from .ids_alerts import load_ids_alerts
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
 logger = logging.getLogger(__name__)
 
 
-def load_all_logs(
-    log_files: List[str] = None
-) -> List[Dict[str, Any]]:
+def load_all_logs() -> List[Dict[str, Any]]:
     """
-    Load all available logs from multiple log files and return as a single list.
-
-    This function aggregates logs from multiple Windows log JSON files into a
-    unified list. By default, it loads from 'windows_logs.json'. Additional
-    log files can be specified via the log_files parameter.
-
-    Args:
-        log_files: List of paths to JSON log files. If None, defaults to
-                  ['datasets/logs/windows_logs.json']. Each file should contain
-                  a JSON array of log entry dictionaries.
+    Load all log sources and combine them into a single list.
 
     Returns:
-        List[Dict[str, Any]]: A consolidated list of all log entries from
-                             all successfully loaded files. Duplicate entries
-                             are preserved.
-
-    Raises:
-        Exception: Catches and logs all exceptions during file loading.
-                   Individual file failures do not stop the process;
-                   only successfully loaded logs are returned.
-
-    Examples:
-        >>> all_logs = load_all_logs()
-        >>> len(all_logs)
-        50
-        >>> all_logs = load_all_logs(['datasets/logs/windows_logs.json', 'datasets/logs/system_logs.json'])
-        >>> len(all_logs)
-        120
+        List[Dict[str, Any]]:
+            Combined logs from Windows, Firewall and IDS sources.
     """
-    if log_files is None:
-        log_files = ["datasets/logs/windows_logs.json"]
 
-    logger.info(f"Starting to load logs from {len(log_files)} file(s)")
+    logger.info("Starting SentinelGPT log collection")
 
     all_logs: List[Dict[str, Any]] = []
+
     successful_loads = 0
     failed_loads = 0
-    total_entries_loaded = 0
 
-    for file_path in log_files:
+    log_sources = [
+        (
+            "Windows Logs",
+            "datasets/logs/windows_logs.json",
+            read_windows_logs
+        ),
+        (
+            "Firewall Logs",
+            "datasets/logs/firewall_logs.json",
+            load_firewall_logs
+        ),
+        (
+            "IDS Alerts",
+            "datasets/logs/ids_alerts.json",
+            load_ids_alerts
+        )
+    ]
+
+    for source_name, file_path, loader_function in log_sources:
+
         try:
-            logger.info(f"Loading logs from: {file_path}")
-            logs = read_windows_logs(file_path)
-            all_logs.extend(logs)
-            entries_count = len(logs)
-            total_entries_loaded += entries_count
-            successful_loads += 1
-            logger.info(
-                f"Successfully loaded {entries_count} entries from {file_path}"
-            )
+            logger.info(f"Loading {source_name}")
 
-        except FileNotFoundError as e:
-            logger.warning(f"File not found, skipping: {file_path} - {str(e)}")
-            failed_loads += 1
+            logs = loader_function(file_path)
+
+            all_logs.extend(logs)
+
+            successful_loads += 1
+
+            logger.info(
+                f"{source_name}: {len(logs)} records loaded successfully"
+            )
 
         except Exception as e:
-            logger.error(
-                f"Error loading {file_path}: {type(e).__name__} - {str(e)}"
-            )
+
             failed_loads += 1
 
+            logger.error(
+                f"{source_name} failed: "
+                f"{type(e).__name__} - {str(e)}"
+            )
+
     logger.info(
-        f"Log loading complete: {successful_loads} succeeded, "
-        f"{failed_loads} failed"
+        f"Log loading complete "
+        f"({successful_loads} succeeded, "
+        f"{failed_loads} failed)"
     )
-    logger.info(f"Total log entries loaded: {len(all_logs)}")
+
+    logger.info(
+        f"Total records collected: {len(all_logs)}"
+    )
 
     return all_logs
 
 
 if __name__ == "__main__":
-    try:
-        # Load from default file
-        logs = load_all_logs()
-        print(f"✓ Total logs loaded: {len(logs)}")
 
-        # Example: Load from multiple files
-        # multi_logs = load_all_logs([
-        #     "datasets/logs/windows_logs.json",
-        #     "datasets/logs/system_logs.json",
-        #     "datasets/logs/application_logs.json"
-        # ])
-        # print(f"✓ Total logs from multiple files: {len(multi_logs)}")
+    logs = load_all_logs()
 
-    except Exception as e:
-        print(f"✗ Unexpected error: {type(e).__name__} - {str(e)}")
+    print("\n========== SENTINELGPT TEST ==========")
+    print(f"Total records loaded: {len(logs)}")
+
+    print("\nFirst 5 records:\n")
+
+    for log in logs[:5]:
+        print(log)
