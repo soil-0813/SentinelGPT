@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.alerts_api import router as alerts_router
+from app.api.chat_api import router as chat_router
 
 app = FastAPI(
     title="SentinelGPT",
@@ -12,3 +13,15 @@ app.include_router(
     prefix="/api",
     tags=["Alerts"]
 )
+
+app.include_router(
+    chat_router,
+    prefix="/api",
+    tags=["Chat"]
+)
+
+@app.get("/")
+def root():
+    return {
+        "message": "SentinelGPT API Running"
+    }
