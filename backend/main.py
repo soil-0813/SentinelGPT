@@ -1,44 +1,42 @@
-from app.rag.embedder import Embedder
+from app.rag.retriever import Retriever
+
+class DummyEmbedder:
+
+    def embed_text(self, text):
+        return [0.1, 0.2, 0.3]
+
+
+class DummyVectorStore:
+
+    def search(self, embedding, top_k):
+
+        return [
+            {
+                "source": "mitre_attack.json",
+                "content": "MITRE ATT&CK T1110 - Brute Force"
+            }
+        ]
 
 
 def main():
 
-    print("=" * 50)
-    print("SentinelGPT Embedder Test")
-    print("=" * 50)
+    store = DummyVectorStore()
 
-    embedder = Embedder()
+    embedder = DummyEmbedder()
 
-    sample_text = (
-        "Brute force attack detected after "
-        "multiple failed login attempts."
+    retriever = Retriever(
+        store,
+        embedder
     )
 
-    print("\nGenerating embedding...\n")
+    query = input("\nEnter Threat Query: ")
 
-    embedding = embedder.embed_text(
-        sample_text
-    )
+    results = retriever.retrieve(query)
 
-    print(
-        f"Embedding Dimension: {len(embedding)}"
-    )
+    print("\nResults:\n")
 
-    print(
-        f"Embedding Shape: {embedding.shape}"
-    )
-
-    print(
-        "\nFirst 10 Values:\n"
-    )
-
-    print(
-        embedding[:10]
-    )
-
-    print(
-        "\nEmbedder Test Completed Successfully."
-    )
+    for result in results:
+        print(result)
 
 
 if __name__ == "__main__":
