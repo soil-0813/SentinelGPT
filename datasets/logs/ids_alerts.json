@@ -1,0 +1,122 @@
+[
+  {
+    "alert_id": "IDS_001",
+    "timestamp": "2026-06-01T08:15:32Z",
+    "source_ip": "203.45.67.89",
+    "alert_type": "port_scan",
+    "severity": "medium",
+    "description": "Network reconnaissance activity detected. Source IP scanned ports 22, 80, 443, 3306, 5432 on internal subnet 10.0.0.0/24 within 30 seconds."
+  },
+  {
+    "alert_id": "IDS_002",
+    "timestamp": "2026-06-01T08:22:15Z",
+    "source_ip": "203.45.67.89",
+    "alert_type": "brute_force",
+    "severity": "high",
+    "description": "SSH brute force attack detected on host 10.0.1.45. 247 failed login attempts from source IP in 5 minutes using common credentials (admin, root, test, password)."
+  },
+  {
+    "alert_id": "IDS_003",
+    "timestamp": "2026-06-01T08:45:23Z",
+    "source_ip": "185.220.100.45",
+    "alert_type": "suspicious_login",
+    "severity": "high",
+    "description": "Successful login from anomalous geography detected. User 'jsmith' logged in from Russia (185.220.100.45) after last login from New York 2 hours ago. Distance impossibility flag triggered."
+  },
+  {
+    "alert_id": "IDS_004",
+    "timestamp": "2026-06-01T09:12:47Z",
+    "source_ip": "203.45.67.89",
+    "alert_type": "malware_download_attempt",
+    "severity": "critical",
+    "description": "Suspicious file download detected. Host 10.0.1.45 attempted to download executable from malicious domain 'updates-repo.ru' via HTTP. File hash matched known trojan signature (Emotet variant)."
+  },
+  {
+    "alert_id": "IDS_005",
+    "timestamp": "2026-06-01T09:35:18Z",
+    "source_ip": "192.168.1.105",
+    "alert_type": "port_scan",
+    "severity": "medium",
+    "description": "Internal IP conducting network discovery. Host 192.168.1.105 executed systematic port scan against database server 10.0.2.50, testing ports 1433, 3306, 5432, 27017 within 2 minutes."
+  },
+  {
+    "alert_id": "IDS_006",
+    "timestamp": "2026-06-01T10:02:54Z",
+    "source_ip": "203.45.67.89",
+    "alert_type": "brute_force",
+    "severity": "high",
+    "description": "HTTP/HTTPS brute force attack detected on web application login endpoint. Source IP 203.45.67.89 attempted 512 login permutations targeting user accounts (admin, administrator, test) with common passwords within 8 minutes."
+  },
+  {
+    "alert_id": "IDS_007",
+    "timestamp": "2026-06-01T10:28:33Z",
+    "source_ip": "91.199.119.200",
+    "alert_type": "suspicious_login",
+    "severity": "medium",
+    "description": "Multiple failed login attempts followed by successful access. User 'mchen' account shows 34 failed attempts then successful login from Chinese IP address. Account may have been compromised during credential stuffing attack."
+  },
+  {
+    "alert_id": "IDS_008",
+    "timestamp": "2026-06-01T11:15:42Z",
+    "source_ip": "192.168.1.105",
+    "alert_type": "malware_download_attempt",
+    "severity": "critical",
+    "description": "C2 communication pattern detected. Internal host 192.168.1.105 established HTTPS connection to known command-and-control server 'c2-infrastructure.xyz'. TLS certificate issued to suspicious entity. Connection attempted data exfiltration."
+  },
+  {
+    "alert_id": "IDS_009",
+    "timestamp": "2026-06-01T11:52:16Z",
+    "source_ip": "203.45.67.89",
+    "alert_type": "suspicious_login",
+    "severity": "critical",
+    "description": "Successful credential compromise. User 'jsmith' account accessed from source IP 203.45.67.89 using stolen credentials. Simultaneous logon from different geographic locations detected. Account immediately queried sensitive customer database tables."
+  },
+  {
+    "alert_id": "IDS_010",
+    "timestamp": "2026-06-01T12:33:08Z",
+    "source_ip": "185.220.100.45",
+    "alert_type": "port_scan",
+    "severity": "medium",
+    "description": "Vulnerability scanning detected. Source IP 185.220.100.45 sent crafted TCP/UDP packets to probe for open services and fingerprint operating systems on network segment 10.0.3.0/24. Nmap signature patterns matched."
+  },
+  {
+    "alert_id": "IDS_011",
+    "timestamp": "2026-06-01T13:18:55Z",
+    "source_ip": "192.168.1.105",
+    "alert_type": "brute_force",
+    "severity": "high",
+    "description": "Database authentication brute force. Host 192.168.1.105 attempted 189 logins against PostgreSQL server targeting 'postgres', 'admin', 'dba' accounts with automated password dictionary. Connection attempts escalated over 4 minutes."
+  },
+  {
+    "alert_id": "IDS_012",
+    "timestamp": "2026-06-01T14:07:23Z",
+    "source_ip": "203.45.67.89",
+    "alert_type": "malware_download_attempt",
+    "severity": "critical",
+    "description": "Advanced malware dropper detected. Source IP 203.45.67.89 hosted on compromised host attempted to download multi-stage payload from attacker infrastructure. File analysis shows persistence mechanism, privilege escalation, and lateral movement capabilities (Cobalt Strike beacon)."
+  },
+  {
+    "alert_id": "IDS_013",
+    "timestamp": "2026-06-01T14:45:37Z",
+    "source_ip": "91.199.119.200",
+    "alert_type": "port_scan",
+    "severity": "medium",
+    "description": "External reconnaissance activity. Source IP 91.199.119.200 performed comprehensive network scan of external-facing DMZ resources. Probed web servers on ports 80, 443, 8080, 8443 and identified service versions through banner grabbing."
+  },
+  {
+    "alert_id": "IDS_014",
+    "timestamp": "2026-06-01T15:22:14Z",
+    "source_ip": "185.220.100.45",
+    "alert_type": "malware_download_attempt",
+    "severity": "high",
+    "description": "Suspicious script execution detected. User initiated download of PowerShell script from untrusted source 185.220.100.45. Script contains obfuscated code with AMSI evasion techniques and attempts to disable Windows Defender."
+  },
+  {
+    "alert_id": "IDS_015",
+    "timestamp": "2026-06-01T16:08:19Z",
+    "source_ip": "203.45.67.89",
+    "alert_type": "suspicious_login",
+    "severity": "critical",
+    "description": "Privilege escalation attempt post-compromise. Compromised user account 'jsmith' (accessed from 203.45.67.89) attempted to add new administrative user account and modify security group policies on domain controller, indicating lateral movement and privilege escalation in progress."
+  }
+]

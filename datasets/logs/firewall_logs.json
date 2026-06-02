@@ -1,0 +1,202 @@
+[
+  {
+    "event_id": "FW-001",
+    "timestamp": "2026-06-02T08:15:23Z",
+    "source_ip": "192.168.1.105",
+    "destination_ip": "8.8.8.8",
+    "port": 53,
+    "protocol": "UDP",
+    "action": "ALLOWED",
+    "reason": "DNS query - internal host"
+  },
+  {
+    "event_id": "FW-002",
+    "timestamp": "2026-06-02T08:16:45Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 22,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "SSH access attempt from external IP"
+  },
+  {
+    "event_id": "FW-003",
+    "timestamp": "2026-06-02T08:17:12Z",
+    "source_ip": "192.168.1.102",
+    "destination_ip": "10.0.0.45",
+    "port": 443,
+    "protocol": "TCP",
+    "action": "ALLOWED",
+    "reason": "HTTPS traffic - internal communication"
+  },
+  {
+    "event_id": "FW-004",
+    "timestamp": "2026-06-02T08:18:03Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 3389,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "RDP access attempt from external IP"
+  },
+  {
+    "event_id": "FW-005",
+    "timestamp": "2026-06-02T08:18:56Z",
+    "source_ip": "192.168.1.110",
+    "destination_ip": "1.1.1.1",
+    "port": 53,
+    "protocol": "UDP",
+    "action": "ALLOWED",
+    "reason": "DNS query - internal host"
+  },
+  {
+    "event_id": "FW-006",
+    "timestamp": "2026-06-02T08:19:34Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 445,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "SMB/Windows file sharing attempt from external IP"
+  },
+  {
+    "event_id": "FW-007",
+    "timestamp": "2026-06-02T08:20:11Z",
+    "source_ip": "192.168.1.50",
+    "destination_ip": "203.0.113.100",
+    "port": 80,
+    "protocol": "TCP",
+    "action": "ALLOWED",
+    "reason": "HTTP outbound - web browsing"
+  },
+  {
+    "event_id": "FW-008",
+    "timestamp": "2026-06-02T08:20:47Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 23,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "Telnet access attempt from external IP"
+  },
+  {
+    "event_id": "FW-009",
+    "timestamp": "2026-06-02T08:21:28Z",
+    "source_ip": "192.168.1.72",
+    "destination_ip": "10.0.0.10",
+    "port": 3306,
+    "protocol": "TCP",
+    "action": "ALLOWED",
+    "reason": "MySQL database query - internal service"
+  },
+  {
+    "event_id": "FW-010",
+    "timestamp": "2026-06-02T08:22:15Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 8080,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "HTTP alternate port attempt from external IP"
+  },
+  {
+    "event_id": "FW-011",
+    "timestamp": "2026-06-02T08:23:01Z",
+    "source_ip": "192.168.1.88",
+    "destination_ip": "203.0.113.75",
+    "port": 443,
+    "protocol": "TCP",
+    "action": "ALLOWED",
+    "reason": "HTTPS outbound - secure web traffic"
+  },
+  {
+    "event_id": "FW-012",
+    "timestamp": "2026-06-02T08:23:42Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 21,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "FTP access attempt from external IP"
+  },
+  {
+    "event_id": "FW-013",
+    "timestamp": "2026-06-02T08:24:19Z",
+    "source_ip": "192.168.1.200",
+    "destination_ip": "8.8.8.8",
+    "port": 53,
+    "protocol": "UDP",
+    "action": "ALLOWED",
+    "reason": "DNS query - internal host"
+  },
+  {
+    "event_id": "FW-014",
+    "timestamp": "2026-06-02T08:24:58Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 135,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "RPC endpoint mapper access attempt from external IP"
+  },
+  {
+    "event_id": "FW-015",
+    "timestamp": "2026-06-02T08:25:33Z",
+    "source_ip": "192.168.1.95",
+    "destination_ip": "203.0.113.200",
+    "port": 443,
+    "protocol": "TCP",
+    "action": "ALLOWED",
+    "reason": "HTTPS outbound - SaaS application"
+  },
+  {
+    "event_id": "FW-016",
+    "timestamp": "2026-06-02T08:26:14Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 139,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "NetBIOS session access attempt from external IP"
+  },
+  {
+    "event_id": "FW-017",
+    "timestamp": "2026-06-02T08:27:05Z",
+    "source_ip": "192.168.1.76",
+    "destination_ip": "10.0.0.50",
+    "port": 5432,
+    "protocol": "TCP",
+    "action": "ALLOWED",
+    "reason": "PostgreSQL database connection - internal service"
+  },
+  {
+    "event_id": "FW-018",
+    "timestamp": "2026-06-02T08:27:41Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 1433,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "MSSQL database port access attempt from external IP"
+  },
+  {
+    "event_id": "FW-019",
+    "timestamp": "2026-06-02T08:28:22Z",
+    "source_ip": "192.168.1.120",
+    "destination_ip": "203.0.113.80",
+    "port": 587,
+    "protocol": "TCP",
+    "action": "ALLOWED",
+    "reason": "SMTP outbound - email submission"
+  },
+  {
+    "event_id": "FW-020",
+    "timestamp": "2026-06-02T08:29:03Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "203.0.113.50",
+    "port": 5984,
+    "protocol": "TCP",
+    "action": "BLOCKED",
+    "reason": "CouchDB access attempt from external IP"
+  }
+]
