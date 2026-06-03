@@ -1,27 +1,28 @@
-from app.llm_engine.mitigation_engine import MitigationEngine
+from app.llm_engine.threat_analyzer import ThreatAnalyzer
 
 def main():
 
     print("=" * 50)
-    print("SentinelGPT Mitigation Engine Test")
+    print("SentinelGPT Threat Analyzer Test")
     print("=" * 50)
 
     sample_incident = {
         "attack_type": "Brute Force Attack",
         "severity": "High",
         "failed_logins": 15,
-        "successful_login": True
+        "successful_login": True,
+        "source_ip": "192.168.1.100"
     }
 
-    engine = MitigationEngine()
+    analyzer = ThreatAnalyzer()
 
-    mitigation = engine.generate_mitigation(
+    analysis = analyzer.analyze_threat(
         sample_incident
     )
 
-    print("\nGenerated Mitigation:\n")
+    print("\nGenerated Analysis:\n")
 
-    print(mitigation)
+    print(analysis)
 
 
 if __name__ == "__main__":
