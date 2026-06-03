@@ -1,0 +1,170 @@
+{
+  "scenario_id": "BRUTE_FORCE_001",
+  "attack_name": "Brute Force Login Attack",
+  "description": "An external attacker conducted a brute force attack against a corporate user account. Over a period of approximately two hours, the attacker generated multiple failed authentication attempts from a single IP address. The activity triggered IDS alerts for brute force and credential attack behavior. Eventually, the attacker successfully authenticated to the target account, indicating a likely account compromise.",
+  "attack_steps": [
+    {
+      "step_id": 1,
+      "timestamp": "2026-06-03T09:00:00Z",
+      "event": "Attack Initiation",
+      "source_ip": "203.0.113.45",
+      "target_user": "john.smith",
+      "event_type": "connection_attempt",
+      "description": "Attacker begins authentication attempts against a corporate user account."
+    },
+    {
+      "step_id": 2,
+      "timestamp": "2026-06-03T09:05:00Z",
+      "event": "Failed Login Attempts",
+      "source_ip": "203.0.113.45",
+      "target_user": "john.smith",
+      "event_type": "failed_login",
+      "event_code": 4625,
+      "failed_attempts": 25,
+      "description": "Multiple failed login attempts detected from the same external IP."
+    },
+    {
+      "step_id": 3,
+      "timestamp": "2026-06-03T09:20:00Z",
+      "event": "IDS Brute Force Detection",
+      "source_ip": "203.0.113.45",
+      "alert_type": "brute_force",
+      "severity": "high",
+      "description": "IDS identifies repeated authentication failures matching brute force attack behavior."
+    },
+    {
+      "step_id": 4,
+      "timestamp": "2026-06-03T09:45:00Z",
+      "event": "Credential Attack Alert",
+      "source_ip": "203.0.113.45",
+      "alert_type": "credential_attack",
+      "severity": "critical",
+      "description": "IDS escalates alert after continued failed authentication attempts."
+    },
+    {
+      "step_id": 5,
+      "timestamp": "2026-06-03T10:15:00Z",
+      "event": "Additional Failed Logins",
+      "source_ip": "203.0.113.45",
+      "target_user": "john.smith",
+      "event_type": "failed_login",
+      "event_code": 4625,
+      "failed_attempts": 67,
+      "description": "Attacker continues password guessing attempts."
+    },
+    {
+      "step_id": 6,
+      "timestamp": "2026-06-03T10:42:00Z",
+      "event": "Successful Login",
+      "source_ip": "203.0.113.45",
+      "target_user": "john.smith",
+      "event_type": "login_success",
+      "event_code": 4624,
+      "description": "Authentication succeeds after numerous failed attempts."
+    },
+    {
+      "step_id": 7,
+      "timestamp": "2026-06-03T10:50:00Z",
+      "event": "Post-Authentication Activity",
+      "source_ip": "203.0.113.45",
+      "target_user": "john.smith",
+      "activity_type": "account_access",
+      "description": "Account activity observed immediately after successful authentication, suggesting potential compromise."
+    }
+  ],
+  "correlation_rules": {
+    "rule_1": {
+      "rule_id": "CORR_BF_001",
+      "name": "Multiple Failed Logins",
+      "description": "Detect repeated failed login attempts from the same source IP.",
+      "windows_logs": ["failed_login"],
+      "threshold": {
+        "failed_attempts": 20,
+        "time_window_minutes": 30
+      },
+      "group_by": "source_ip",
+      "severity": "high"
+    },
+    "rule_2": {
+      "rule_id": "CORR_BF_002",
+      "name": "Brute Force Followed by Successful Login",
+      "description": "Correlate failed login clusters with a successful login from the same source IP.",
+      "windows_logs": ["failed_login", "login_success"],
+      "pattern": "failed_login_cluster -> login_success",
+      "time_window_minutes": 180,
+      "severity": "critical"
+    },
+    "rule_3": {
+      "rule_id": "CORR_BF_003",
+      "name": "IDS Brute Force Correlation",
+      "description": "Correlate IDS brute force alerts with Windows failed login events.",
+      "ids_alerts": ["brute_force"],
+      "windows_logs": ["failed_login"],
+      "correlation_field": "source_ip",
+      "severity": "high"
+    },
+    "rule_4": {
+      "rule_id": "CORR_BF_004",
+      "name": "Credential Attack Detection",
+      "description": "Correlate IDS credential attack alerts with failed login activity.",
+      "ids_alerts": ["credential_attack"],
+      "windows_logs": ["failed_login"],
+      "minimum_failed_attempts": 50,
+      "severity": "critical"
+    }
+  },
+  "risk_score": 85,
+  "severity": "high",
+  "mitre_attack": [
+    {
+      "technique_id": "T1110",
+      "technique_name": "Brute Force"
+    },
+    {
+      "technique_id": "T1110.001",
+      "technique_name": "Password Guessing"
+    },
+    {
+      "technique_id": "T1078",
+      "technique_name": "Valid Accounts"
+    }
+  ],
+  "ioc_examples": {
+    "malicious_ips": ["203.0.113.45"],
+    "targeted_accounts": ["john.smith", "administrator", "admin"],
+    "observed_patterns": [
+      "Multiple failed authentication attempts",
+      "Repeated login attempts from a single IP address",
+      "Successful login after extensive failures"
+    ],
+    "ids_alerts": ["brute_force", "credential_attack"]
+  },
+  "recommended_actions": [
+    {
+      "priority": "critical",
+      "action": "Disable Compromised Account",
+      "description": "Temporarily disable the affected account until investigation is completed."
+    },
+    {
+      "priority": "critical",
+      "action": "Reset Credentials",
+      "description": "Force password reset and invalidate active sessions."
+    },
+    {
+      "priority": "high",
+      "action": "Block Malicious IP",
+      "description": "Add the source IP address to firewall and IDS block lists."
+    },
+    {
+      "priority": "high",
+      "action": "Enable MFA",
+      "description": "Require multi-factor authentication for affected and privileged accounts."
+    },
+    {
+      "priority": "medium",
+      "action": "Review Authentication Logs",
+      "description": "Investigate additional authentication activity related to the account."
+    }
+  ],
+  "executive_summary": "A high-severity brute force attack was detected against a corporate user account. The attacker generated numerous failed authentication attempts from a single external IP address, triggering IDS alerts for brute force and credential attack activity. The attack eventually resulted in a successful login, indicating a likely account compromise. Immediate containment actions include account disablement, credential reset, IP blocking, and enforcement of multi-factor authentication. The incident has been assigned a risk score of 85 due to the confirmed successful authentication following sustained attack activity."
+}
