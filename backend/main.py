@@ -1,26 +1,42 @@
 from app.data_sources.log_loader import load_all_logs
 
-logs = load_all_logs()
+from app.preprocessing.parser import parse_logs
+from app.preprocessing.cleaner import clean_logs
+from app.preprocessing.log_normalizer import normalize_logs
+from app.preprocessing.feature_extractor import extract_features
 
-print("\n========== TEST RESULTS ==========")
-print(f"Total records loaded: {len(logs)}")
 
-windows_count = 0
-firewall_count = 0
-ids_count = 0
+def main():
 
-for log in logs:
+    print("\n========== SENTINELGPT PIPELINE TEST ==========\n")
 
-    if "username" in log:
-        windows_count += 1
+    # Load logs
+    raw_logs = load_all_logs()
+    print(f"Raw logs loaded: {len(raw_logs)}")
 
-    elif "destination_ip" in log:
-        firewall_count += 1
+    # Parse logs
+    parsed_logs = parse_logs(raw_logs)
+    print(f"Parsed logs: {len(parsed_logs)}")
 
-    elif "alert_type" in log:
-        ids_count += 1
+    # Clean logs
+    cleaned_logs = clean_logs(parsed_logs)
+    print(f"Cleaned logs: {len(cleaned_logs)}")
 
-print("\nVerification:")
-print(f"Windows Logs : {windows_count}")
-print(f"Firewall Logs: {firewall_count}")
-print(f"IDS Alerts   : {ids_count}")
+    # Normalize logs
+    normalized_logs = normalize_logs(cleaned_logs)
+    print(f"Normalized logs: {len(normalized_logs)}")
+
+    # Extract features
+    feature_logs = extract_features(normalized_logs)
+    print(f"Feature enriched logs: {len(feature_logs)}")
+
+    print("\n========== SAMPLE OUTPUT ==========\n")
+
+    if feature_logs:
+        print(feature_logs[0])
+
+    print("\n========== PIPELINE SUCCESS ==========\n")
+
+
+if __name__ == "__main__":
+    main()
