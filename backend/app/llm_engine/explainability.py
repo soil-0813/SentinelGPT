@@ -1,9 +1,7 @@
 import requests
 
 
-def explain_with_ollama(
-    incident_data
-):
+def explain_with_ollama(incident_data):
 
     prompt = f"""
     You are a SOC analyst.
@@ -21,9 +19,7 @@ def explain_with_ollama(
     """
 
     response = requests.post(
-
         "http://localhost:11434/api/generate",
-
         json={
             "model": "llama3",
             "prompt": prompt,
@@ -31,4 +27,12 @@ def explain_with_ollama(
         }
     )
 
-    return response.json()["response"]
+    data = response.json()
+
+    print("Ollama Response:")
+    print(data)
+
+    return data.get(
+        "response",
+        "No response returned from Ollama."
+    )
