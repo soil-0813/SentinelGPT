@@ -1,30 +1,27 @@
-from app.llm_engine.explainability import explain_with_ollama
-
+from app.llm_engine.mitigation_engine import MitigationEngine
 
 def main():
 
     print("=" * 50)
-    print("SentinelGPT Explainability Test")
+    print("SentinelGPT Mitigation Engine Test")
     print("=" * 50)
 
     sample_incident = {
         "attack_type": "Brute Force Attack",
         "severity": "High",
         "failed_logins": 15,
-        "successful_login": True,
-        "source_ip": "192.168.1.100",
-        "mitre_technique": "T1110"
+        "successful_login": True
     }
 
-    print("\nSending incident to Ollama...\n")
+    engine = MitigationEngine()
 
-    explanation = explain_with_ollama(
+    mitigation = engine.generate_mitigation(
         sample_incident
     )
 
-    print("\nGenerated Explanation:\n")
+    print("\nGenerated Mitigation:\n")
 
-    print(explanation)
+    print(mitigation)
 
 
 if __name__ == "__main__":
