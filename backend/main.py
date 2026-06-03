@@ -1,23 +1,21 @@
-from app.llm_engine.threat_analyzer import ThreatAnalyzer
+from app.llm_engine.vulnerability_reasoner import VulnerabilityReasoner
 
 def main():
 
     print("=" * 50)
-    print("SentinelGPT Threat Analyzer Test")
+    print("SentinelGPT Vulnerability Reasoner Test")
     print("=" * 50)
 
-    sample_incident = {
-        "attack_type": "Brute Force Attack",
-        "severity": "High",
-        "failed_logins": 15,
-        "successful_login": True,
-        "source_ip": "192.168.1.100"
+    vulnerability = {
+        "cve_id": "CVE-2021-44228",
+        "name": "Log4Shell",
+        "cvss_score": 10.0
     }
 
-    analyzer = ThreatAnalyzer()
+    reasoner = VulnerabilityReasoner()
 
-    analysis = analyzer.analyze_threat(
-        sample_incident
+    analysis = reasoner.analyze_vulnerability(
+        vulnerability
     )
 
     print("\nGenerated Analysis:\n")
