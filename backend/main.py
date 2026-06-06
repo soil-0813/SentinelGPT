@@ -5,23 +5,22 @@ def main():
 
     loader = DocumentLoader()
 
-    mitre_data = loader.load_json(
-        "mitre_attack.json"
+    owasp_data = loader.load_json(
+        "owasp_top10.json"
     )
 
     print(
-        f"\nLoaded {len(mitre_data)} MITRE Techniques\n"
+        f"\nLoaded {len(owasp_data)} OWASP Entries\n"
     )
 
-    for technique in mitre_data:
+    for item in owasp_data:
 
         print(
-            f"{technique['technique_id']} - "
-            f"{technique['technique_name']}"
+            f"{item['id']} - {item['name']}"
         )
 
         print(
-            f"Tactic: {technique['tactic']}"
+            f"Severity: {item['severity']}"
         )
 
         print("-" * 50)
