@@ -1,0 +1,123 @@
+[
+    {
+        "playbook_id": "PB-001",
+        "incident_type": "Brute Force Attack",
+        "severity": "High",
+        "detection_indicators": [
+            "Multiple failed login attempts",
+            "Repeated authentication failures",
+            "Login attempts from suspicious IPs"
+        ],
+        "containment_steps": [
+            "Lock affected account",
+            "Block source IP address",
+            "Enable MFA"
+        ],
+        "eradication_steps": [
+            "Reset compromised credentials",
+            "Review authentication logs"
+        ],
+        "recovery_steps": [
+            "Restore normal user access",
+            "Monitor account activity"
+        ],
+        "mitre_attack": ["T1110"]
+    },
+
+    {
+        "playbook_id": "PB-002",
+        "incident_type": "Phishing Attack",
+        "severity": "High",
+        "detection_indicators": [
+            "Suspicious email",
+            "Credential harvesting attempt",
+            "Malicious attachment"
+        ],
+        "containment_steps": [
+            "Block sender",
+            "Remove phishing email",
+            "Disable compromised account"
+        ],
+        "eradication_steps": [
+            "Scan affected endpoints",
+            "Reset credentials"
+        ],
+        "recovery_steps": [
+            "Restore affected systems",
+            "Conduct user awareness training"
+        ],
+        "mitre_attack": ["T1566"]
+    },
+
+    {
+        "playbook_id": "PB-003",
+        "incident_type": "Ransomware",
+        "severity": "Critical",
+        "detection_indicators": [
+            "Mass file encryption",
+            "Ransom note detected",
+            "Abnormal file modifications"
+        ],
+        "containment_steps": [
+            "Isolate infected systems",
+            "Disable network access",
+            "Block malicious processes"
+        ],
+        "eradication_steps": [
+            "Remove malware",
+            "Patch vulnerabilities"
+        ],
+        "recovery_steps": [
+            "Restore backups",
+            "Validate system integrity"
+        ],
+        "mitre_attack": ["T1486"]
+    },
+
+    {
+        "playbook_id": "PB-004",
+        "incident_type": "SQL Injection",
+        "severity": "Critical",
+        "detection_indicators": [
+            "Suspicious database queries",
+            "Unexpected SQL errors",
+            "Unauthorized database access"
+        ],
+        "containment_steps": [
+            "Block malicious requests",
+            "Restrict database access"
+        ],
+        "eradication_steps": [
+            "Patch vulnerable application",
+            "Review database logs"
+        ],
+        "recovery_steps": [
+            "Restore affected data",
+            "Validate application security"
+        ],
+        "mitre_attack": ["T1190"]
+    },
+
+    {
+        "playbook_id": "PB-005",
+        "incident_type": "Privilege Escalation",
+        "severity": "High",
+        "detection_indicators": [
+            "Unexpected admin access",
+            "Unauthorized privilege changes"
+        ],
+        "containment_steps": [
+            "Disable affected account",
+            "Revoke elevated privileges"
+        ],
+        "eradication_steps": [
+            "Investigate compromised account",
+            "Patch vulnerabilities"
+        ],
+        "recovery_steps": [
+            "Restore least privilege model",
+            "Monitor privileged accounts"
+        ],
+        "mitre_attack": ["T1068"]
+    }
+]
