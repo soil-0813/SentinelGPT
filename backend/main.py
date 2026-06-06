@@ -5,22 +5,23 @@ def main():
 
     loader = DocumentLoader()
 
-    playbooks = loader.load_json(
-        "incident_playbooks.json"
+    mitre_data = loader.load_json(
+        "mitre_attack.json"
     )
 
     print(
-        f"\nLoaded {len(playbooks)} Playbooks\n"
+        f"\nLoaded {len(mitre_data)} MITRE Techniques\n"
     )
 
-    for playbook in playbooks:
+    for technique in mitre_data:
 
         print(
-            f"Playbook: {playbook['incident_type']}"
+            f"{technique['technique_id']} - "
+            f"{technique['technique_name']}"
         )
 
         print(
-            f"Severity: {playbook['severity']}"
+            f"Tactic: {technique['tactic']}"
         )
 
         print("-" * 50)
