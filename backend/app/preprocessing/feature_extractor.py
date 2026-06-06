@@ -162,6 +162,107 @@ def detect_blocked_connection(log_record: Dict) -> bool:
     
     return False
 
+def detect_successful_login(log_record: Dict) -> bool:
+    event_type = str(log_record.get("event_type", "")).lower()
+    raw_log = log_record.get("raw_log", {})
+
+    if "login_success" in event_type or "successful_login" in event_type:
+        return True
+
+    event_id = str(raw_log.get("event_id", ""))
+    if event_id == "4624":
+        return True
+
+    return False
+
+def detect_phishing(log_record: Dict) -> bool:
+    event_type = str(log_record.get("event_type", "")).lower()
+    raw_log = log_record.get("raw_log", {})
+
+    if "phishing" in event_type:
+        return True
+
+    alert_type = str(raw_log.get("alert_type", "")).lower()
+    description = str(raw_log.get("description", "")).lower()
+
+    if "phishing" in alert_type:
+        return True
+
+    if "phishing" in description:
+        return True
+
+    return False
+
+def detect_credential_attack(log_record: Dict) -> bool:
+    event_type = str(log_record.get("event_type", "")).lower()
+    raw_log = log_record.get("raw_log", {})
+
+    if "credential_attack" in event_type:
+        return True
+
+    alert_type = str(raw_log.get("alert_type", "")).lower()
+
+    if "credential_attack" in alert_type:
+        return True
+
+    return False
+
+def detect_lateral_movement(log_record: Dict) -> bool:
+    event_type = str(log_record.get("event_type", "")).lower()
+    raw_log = log_record.get("raw_log", {})
+
+    if "lateral_movement" in event_type:
+        return True
+
+    activity_type = str(raw_log.get("activity_type", "")).lower()
+
+    if "lateral_movement" in activity_type:
+        return True
+
+    return False
+
+def detect_file_encryption(log_record: Dict) -> bool:
+    event_type = str(log_record.get("event_type", "")).lower()
+    raw_log = log_record.get("raw_log", {})
+
+    if "file_encryption" in event_type:
+        return True
+
+    description = str(raw_log.get("description", "")).lower()
+
+    keywords = [
+        "encrypted",
+        "file encryption",
+        "ransom note",
+        "mass file modification"
+    ]
+
+    return any(keyword in description for keyword in keywords)
+
+def detect_ransomware(log_record: Dict) -> bool:
+    event_type = str(log_record.get("event_type", "")).lower()
+    raw_log = log_record.get("raw_log", {})
+
+    if "ransomware" in event_type:
+        return True
+
+    alert_type = str(raw_log.get("alert_type", "")).lower()
+    description = str(raw_log.get("description", "")).lower()
+
+    keywords = [
+        "ransomware",
+        "encryptor",
+        "crypto locker",
+        "ransom note"
+    ]
+
+    if any(keyword in alert_type for keyword in keywords):
+        return True
+
+    if any(keyword in description for keyword in keywords):
+        return True
+
+    return False
 
 def extract_features(logs: List[Dict]) -> List[Dict]:
     """
@@ -184,7 +285,7 @@ def extract_features(logs: List[Dict]) -> List[Dict]:
     
     enriched_logs = []
     skipped_count = 0
-    
+
     for idx, log_record in enumerate(logs):
         try:
             # Validate input is a dictionary
@@ -217,20 +318,38 @@ def extract_features(logs: List[Dict]) -> List[Dict]:
             is_port_scan = detect_port_scan(log_record)
             is_malware = detect_malware(log_record)
             is_blocked_connection = detect_blocked_connection(log_record)
+
+            is_successful_login = detect_successful_login(log_record)
+            is_phishing = detect_phishing(log_record)
+            is_credential_attack = detect_credential_attack(log_record)
+            is_lateral_movement = detect_lateral_movement(log_record)
+            is_file_encryption = detect_file_encryption(log_record)
+            is_ransomware = detect_ransomware(log_record)
             
             # Build features dictionary
             features = {
-                "source_ip": source_ip,
-                "event_type": event_type,
-                "severity": severity,
-                "timestamp": timestamp,
-                "log_source": log_source,
-                "hour_of_day": hour_of_day,
-                "is_failed_login": is_failed_login,
-                "is_port_scan": is_port_scan,
-                "is_malware": is_malware,
-                "is_blocked_connection": is_blocked_connection,
-            }
+            "source_ip": source_ip,
+            "event_type": event_type,
+            "severity": severity,
+            "timestamp": timestamp,
+            "log_source": log_source,
+
+            "hour_of_day": hour_of_day,
+
+            "is_failed_login": is_failed_login,
+            "is_successful_login": is_successful_login,
+
+            "is_port_scan": is_port_scan,
+            "is_malware": is_malware,
+            "is_phishing": is_phishing,
+            "is_credential_attack": is_credential_attack,
+
+            "is_blocked_connection": is_blocked_connection,
+
+            "is_lateral_movement": is_lateral_movement,
+            "is_file_encryption": is_file_encryption,
+            "is_ransomware": is_ransomware,
+}
             
             # Create enriched log record
             enriched_record = log_record.copy()
