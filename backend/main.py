@@ -1,26 +1,22 @@
-from app.llm_engine.vulnerability_reasoner import VulnerabilityReasoner
+from app.rag.document_loader import DocumentLoader
 
 def main():
 
-    print("=" * 50)
-    print("SentinelGPT Vulnerability Reasoner Test")
-    print("=" * 50)
+    loader = DocumentLoader()
 
-    vulnerability = {
-        "cve_id": "CVE-2021-44228",
-        "name": "Log4Shell",
-        "cvss_score": 10.0
-    }
+    documents = loader.load_all_documents()
 
-    reasoner = VulnerabilityReasoner()
-
-    analysis = reasoner.analyze_vulnerability(
-        vulnerability
+    print(
+        f"Loaded {len(documents)} documents"
     )
 
-    print("\nGenerated Analysis:\n")
+    print(
+        "\nFirst Document:\n"
+    )
 
-    print(analysis)
+    print(
+        documents[0]
+    )
 
 
 if __name__ == "__main__":
