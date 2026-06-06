@@ -9,52 +9,83 @@ from app.correlation.event_correlator import correlate_events
 from app.correlation.timeline_builder import build_timeline
 from app.correlation.severity_scorer import score_attack
 
+from app.database.db import (
+    initialize_database,
+    save_incident,
+    get_all_incidents
+)
+
+import uuid
+
 
 def main():
 
     print("\n========== SENTINELGPT PIPELINE TEST ==========\n")
 
-    # ----------------------------------
-    # Load Logs
-    # ----------------------------------
+    # ==================================================
+    # DATABASE INITIALIZATION
+    # ==================================================
+
+    initialize_database()
+
+    # ==================================================
+    # LOAD LOGS
+    # ==================================================
+
     raw_logs = load_all_logs()
+
     print(f"Raw logs loaded: {len(raw_logs)}")
 
-    # ----------------------------------
-    # Parse Logs
-    # ----------------------------------
+    # ==================================================
+    # PARSE LOGS
+    # ==================================================
+
     parsed_logs = parse_logs(raw_logs)
+
     print(f"Parsed logs: {len(parsed_logs)}")
 
-    # ----------------------------------
-    # Clean Logs
-    # ----------------------------------
+    # ==================================================
+    # CLEAN LOGS
+    # ==================================================
+
     cleaned_logs = clean_logs(parsed_logs)
+
     print(f"Cleaned logs: {len(cleaned_logs)}")
 
-    # ----------------------------------
-    # Normalize Logs
-    # ----------------------------------
+    # ==================================================
+    # NORMALIZE LOGS
+    # ==================================================
+
     normalized_logs = normalize_logs(cleaned_logs)
+
     print(f"Normalized logs: {len(normalized_logs)}")
 
-    # ----------------------------------
-    # Extract Features
-    # ----------------------------------
+    # ==================================================
+    # FEATURE EXTRACTION
+    # ==================================================
+
     feature_logs = extract_features(normalized_logs)
+
     print(f"Feature enriched logs: {len(feature_logs)}")
 
-    # ----------------------------------
-    # Correlate Events
-    # ----------------------------------
+    # ==================================================
+    # CORRELATION ENGINE
+    # ==================================================
+
     attack_stories = correlate_events(feature_logs)
+
     print(f"Attack stories detected: {len(attack_stories)}")
 
     if not attack_stories:
+
         print("\nNo correlated attacks detected.\n")
         return
 
     print("\n========== CORRELATION RESULTS ==========\n")
+
+    # ==================================================
+    # PROCESS ATTACK STORIES
+    # ==================================================
 
     for idx, story in enumerate(attack_stories, start=1):
 
@@ -70,23 +101,26 @@ def main():
         for step in story["reasoning"]:
             print(f"  - {step}")
 
-        # ----------------------------------
-        # Build Timeline
-        # ----------------------------------
+        # --------------------------------------------
+        # Timeline
+        # --------------------------------------------
+
         timeline = build_timeline(story)
 
         print("\nTimeline:")
 
         for event in timeline:
+
             print(
                 f"  [{event['timestamp']}] "
                 f"{event['event_type']} "
                 f"({event['source']})"
             )
 
-        # ----------------------------------
+        # --------------------------------------------
         # Severity Scoring
-        # ----------------------------------
+        # --------------------------------------------
+
         severity_data = score_attack(story)
 
         print("\nRisk Assessment")
@@ -102,9 +136,43 @@ def main():
         print("\nJustification:")
 
         for reason in severity_data["justification"]:
+
             print(f"  - {reason}")
 
-        print("\nSupporting Events:")
+        # --------------------------------------------
+        # Incident Object
+        # --------------------------------------------
+
+        incident = {
+
+            "incident_id":
+                str(uuid.uuid4()),
+
+            "attack_type":
+                story["attack_type"],
+
+            "severity":
+                severity_data["severity"],
+
+            "risk_score":
+                severity_data["risk_score"],
+
+            "source_ip":
+                story["source_ip"],
+
+            "confidence":
+                story["confidence"],
+
+            "reasoning":
+                story["reasoning"],
+
+            "timeline":
+                timeline
+        }
+
+        save_incident(incident)
+
+        print("\nIncident saved to database.")
 
         print(
             f"Total correlated logs: "
@@ -112,6 +180,28 @@ def main():
         )
 
         print("-" * 60)
+
+    # ==================================================
+    # VERIFY DATABASE
+    # ==================================================
+
+    print("\n========== DATABASE CONTENT ==========\n")
+
+    incidents = get_all_incidents()
+
+    print(
+        f"Incidents stored in database: "
+        f"{len(incidents)}"
+    )
+
+    for incident in incidents:
+
+        print(
+            f"ID={incident[0]} | "
+            f"Attack={incident[1]} | "
+            f"Severity={incident[2]} | "
+            f"Risk={incident[3]}"
+        )
 
     print("\n========== PIPELINE SUCCESS ==========\n")
 
