@@ -1,22 +1,29 @@
 from app.rag.document_loader import DocumentLoader
 
+
 def main():
 
     loader = DocumentLoader()
 
-    documents = loader.load_all_documents()
-
-    print(
-        f"Loaded {len(documents)} documents"
+    playbooks = loader.load_json(
+        "incident_playbooks.json"
     )
 
     print(
-        "\nFirst Document:\n"
+        f"\nLoaded {len(playbooks)} Playbooks\n"
     )
 
-    print(
-        documents[0]
-    )
+    for playbook in playbooks:
+
+        print(
+            f"Playbook: {playbook['incident_type']}"
+        )
+
+        print(
+            f"Severity: {playbook['severity']}"
+        )
+
+        print("-" * 50)
 
 
 if __name__ == "__main__":
