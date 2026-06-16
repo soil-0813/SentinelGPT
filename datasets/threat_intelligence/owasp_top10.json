@@ -1,0 +1,123 @@
+[
+  {
+    "id": "A01:2021",
+    "name": "Broken Access Control",
+    "description": "Restrictions on authenticated users are not properly enforced.",
+    "severity": "Critical",
+    "common_attacks": ["Privilege Escalation", "Unauthorized Access"],
+    "mitre_attack": ["T1068"],
+    "mitigation": [
+      "Implement least privilege",
+      "Enforce authorization checks",
+      "Regular access reviews"
+    ]
+  },
+
+  {
+    "id": "A02:2021",
+    "name": "Cryptographic Failures",
+    "description": "Sensitive data exposure caused by weak or missing encryption.",
+    "severity": "High",
+    "common_attacks": ["Data Theft", "Credential Exposure"],
+    "mitre_attack": ["T1005"],
+    "mitigation": [
+      "Use strong encryption",
+      "Protect keys securely",
+      "Use HTTPS everywhere"
+    ]
+  },
+
+  {
+    "id": "A03:2021",
+    "name": "Injection",
+    "description": "Untrusted input is interpreted as commands or queries.",
+    "severity": "Critical",
+    "common_attacks": ["SQL Injection", "Command Injection"],
+    "mitre_attack": ["T1190"],
+    "mitigation": [
+      "Input validation",
+      "Parameterized queries",
+      "Web Application Firewall"
+    ]
+  },
+
+  {
+    "id": "A04:2021",
+    "name": "Insecure Design",
+    "description": "Security weaknesses resulting from flawed application design.",
+    "severity": "High",
+    "common_attacks": ["Business Logic Abuse"],
+    "mitigation": ["Threat modeling", "Secure SDLC", "Security reviews"]
+  },
+
+  {
+    "id": "A05:2021",
+    "name": "Security Misconfiguration",
+    "description": "Improperly configured software, cloud services, or systems.",
+    "severity": "High",
+    "common_attacks": ["Unauthorized Access", "Information Disclosure"],
+    "mitigation": [
+      "Secure default settings",
+      "Configuration audits",
+      "System hardening"
+    ]
+  },
+
+  {
+    "id": "A06:2021",
+    "name": "Vulnerable and Outdated Components",
+    "description": "Using software with known vulnerabilities.",
+    "severity": "Critical",
+    "common_attacks": ["Remote Code Execution"],
+    "mitigation": ["Patch management", "Dependency scanning", "Asset inventory"]
+  },
+
+  {
+    "id": "A07:2021",
+    "name": "Identification and Authentication Failures",
+    "description": "Weak authentication mechanisms allowing account compromise.",
+    "severity": "High",
+    "common_attacks": ["Brute Force Attack", "Credential Stuffing"],
+    "mitre_attack": ["T1110"],
+    "mitigation": [
+      "Multi-Factor Authentication",
+      "Strong password policies",
+      "Account lockout controls"
+    ]
+  },
+
+  {
+    "id": "A08:2021",
+    "name": "Software and Data Integrity Failures",
+    "description": "Failures in software updates and CI/CD pipelines.",
+    "severity": "High",
+    "common_attacks": ["Supply Chain Attack"],
+    "mitigation": [
+      "Code signing",
+      "Integrity verification",
+      "Secure CI/CD pipelines"
+    ]
+  },
+
+  {
+    "id": "A09:2021",
+    "name": "Security Logging and Monitoring Failures",
+    "description": "Insufficient logging and monitoring of security events.",
+    "severity": "High",
+    "common_attacks": ["Stealthy Persistence"],
+    "mitigation": [
+      "Centralized logging",
+      "SIEM integration",
+      "Continuous monitoring"
+    ]
+  },
+
+  {
+    "id": "A10:2021",
+    "name": "Server-Side Request Forgery (SSRF)",
+    "description": "Server fetches remote resources without validating user-supplied URLs.",
+    "severity": "High",
+    "common_attacks": ["Internal Network Enumeration"],
+    "mitigation": ["URL validation", "Network segmentation", "Allow-listing"]
+  }
+]

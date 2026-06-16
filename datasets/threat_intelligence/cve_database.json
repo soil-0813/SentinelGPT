@@ -1,0 +1,77 @@
+[
+  {
+    "cve_id": "CVE-2021-44228",
+    "name": "Log4Shell",
+    "cvss_score": 10.0,
+    "severity": "Critical",
+    "description": "Remote code execution vulnerability in Apache Log4j.",
+    "affected_software": "Apache Log4j",
+    "attack_type": "Remote Code Execution",
+    "mitre_attack": ["T1190", "T1059"],
+    "recommended_actions": [
+      "Update Log4j to latest version",
+      "Remove vulnerable JNDI lookups",
+      "Monitor suspicious outbound connections"
+    ]
+  },
+  {
+    "cve_id": "CVE-2017-0144",
+    "name": "EternalBlue",
+    "cvss_score": 8.1,
+    "severity": "High",
+    "description": "SMB vulnerability used by WannaCry ransomware.",
+    "affected_software": "Microsoft Windows SMB",
+    "attack_type": "Remote Exploitation",
+    "mitre_attack": ["T1210"],
+    "recommended_actions": [
+      "Apply MS17-010 patch",
+      "Disable SMBv1",
+      "Restrict SMB access"
+    ]
+  },
+  {
+    "cve_id": "CVE-2023-34362",
+    "name": "MOVEit Transfer SQL Injection",
+    "cvss_score": 9.8,
+    "severity": "Critical",
+    "description": "SQL injection vulnerability in MOVEit Transfer.",
+    "affected_software": "MOVEit Transfer",
+    "attack_type": "SQL Injection",
+    "mitre_attack": ["T1190"],
+    "recommended_actions": [
+      "Apply vendor patch",
+      "Review web logs",
+      "Audit exposed systems"
+    ]
+  },
+  {
+    "cve_id": "CVE-2019-0708",
+    "name": "BlueKeep",
+    "cvss_score": 9.8,
+    "severity": "Critical",
+    "description": "Remote Desktop Services remote code execution vulnerability.",
+    "affected_software": "Microsoft Windows RDP",
+    "attack_type": "Remote Code Execution",
+    "mitre_attack": ["T1021"],
+    "recommended_actions": [
+      "Apply Microsoft security updates",
+      "Restrict RDP exposure",
+      "Enable MFA"
+    ]
+  },
+  {
+    "cve_id": "CVE-2021-34527",
+    "name": "PrintNightmare",
+    "cvss_score": 8.8,
+    "severity": "High",
+    "description": "Windows Print Spooler remote code execution vulnerability.",
+    "affected_software": "Windows Print Spooler",
+    "attack_type": "Privilege Escalation",
+    "mitre_attack": ["T1068"],
+    "recommended_actions": [
+      "Apply Microsoft patches",
+      "Disable Print Spooler where unnecessary",
+      "Monitor privileged accounts"
+    ]
+  }
+]
