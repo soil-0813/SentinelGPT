@@ -1,0 +1,195 @@
+{
+  "scenario_id": "PHISHING_001",
+  "attack_name": "Credential Phishing Campaign",
+  "description": "A targeted phishing campaign was launched against corporate employees using a spoofed Microsoft 365 login page. An employee received a fraudulent email claiming that their mailbox would be suspended unless immediate action was taken. The user clicked the malicious link, entered corporate credentials into a fake login portal, and unknowingly exposed their username and password. Shortly afterward, the attacker authenticated successfully from an external IP address and accessed internal corporate resources.",
+  "attack_steps": [
+    {
+      "step_id": 1,
+      "timestamp": "2026-06-04T08:15:00Z",
+      "event": "Phishing Email Delivered",
+      "target_user": "alice.johnson",
+      "sender_email": "support@micr0soft-security.com",
+      "subject": "Urgent: Mailbox Verification Required",
+      "event_type": "phishing_email",
+      "description": "User receives a phishing email impersonating Microsoft 365 support."
+    },
+    {
+      "step_id": 2,
+      "timestamp": "2026-06-04T08:17:00Z",
+      "event": "Malicious Link Clicked",
+      "target_user": "alice.johnson",
+      "url": "https://office365-secure-login.com/verify",
+      "event_type": "url_click",
+      "description": "User clicks a malicious URL embedded in the phishing email."
+    },
+    {
+      "step_id": 3,
+      "timestamp": "2026-06-04T08:18:30Z",
+      "event": "Credential Theft",
+      "target_user": "alice.johnson",
+      "phishing_domain": "office365-secure-login.com",
+      "event_type": "credential_harvest",
+      "description": "User enters corporate credentials into a fraudulent login page."
+    },
+    {
+      "step_id": 4,
+      "timestamp": "2026-06-04T08:19:00Z",
+      "event": "IDS Phishing Alert",
+      "source_ip": "198.51.100.77",
+      "alert_type": "phishing_activity",
+      "severity": "high",
+      "description": "IDS identifies outbound communication with a known phishing infrastructure."
+    },
+    {
+      "step_id": 5,
+      "timestamp": "2026-06-04T08:20:00Z",
+      "event": "Firewall Outbound Connection",
+      "source_ip": "10.10.25.18",
+      "destination_domain": "office365-secure-login.com",
+      "event_type": "outbound_connection",
+      "description": "Firewall records outbound HTTPS connection to phishing domain."
+    },
+    {
+      "step_id": 6,
+      "timestamp": "2026-06-04T08:45:00Z",
+      "event": "Suspicious Login",
+      "source_ip": "198.51.100.77",
+      "target_user": "alice.johnson",
+      "event_type": "login_success",
+      "event_code": 4624,
+      "description": "Successful login observed from an unusual geographic location shortly after credential theft."
+    },
+    {
+      "step_id": 7,
+      "timestamp": "2026-06-04T08:52:00Z",
+      "event": "Resource Access",
+      "source_ip": "198.51.100.77",
+      "target_user": "alice.johnson",
+      "resource": "HR_Finance_Share",
+      "event_type": "resource_access",
+      "description": "Attacker accesses sensitive internal resources using compromised credentials."
+    },
+    {
+      "step_id": 8,
+      "timestamp": "2026-06-04T09:05:00Z",
+      "event": "Data Collection Activity",
+      "source_ip": "198.51.100.77",
+      "target_user": "alice.johnson",
+      "event_type": "account_abuse",
+      "description": "Large volume of file access activity suggests data collection by the attacker."
+    }
+  ],
+  "correlation_rules": {
+    "rule_1": {
+      "rule_id": "CORR_PHISH_001",
+      "name": "Phishing Email to Malicious URL Access",
+      "description": "Correlate phishing email indicators with outbound access to suspicious domains.",
+      "ids_alerts": ["phishing_activity"],
+      "firewall_events": ["outbound_connection"],
+      "time_window_minutes": 30,
+      "severity": "high"
+    },
+    "rule_2": {
+      "rule_id": "CORR_PHISH_002",
+      "name": "Credential Theft Followed by Login",
+      "description": "Detect successful authentication shortly after phishing activity.",
+      "windows_logs": ["login_success"],
+      "ids_alerts": ["phishing_activity"],
+      "time_window_minutes": 60,
+      "severity": "critical"
+    },
+    "rule_3": {
+      "rule_id": "CORR_PHISH_003",
+      "name": "Firewall Connection to Known Phishing Domain",
+      "description": "Correlate outbound firewall traffic with known phishing infrastructure.",
+      "firewall_events": ["outbound_connection"],
+      "correlation_field": "destination_domain",
+      "severity": "high"
+    },
+    "rule_4": {
+      "rule_id": "CORR_PHISH_004",
+      "name": "Suspicious Login and Resource Access",
+      "description": "Detect unusual successful login followed by access to sensitive resources.",
+      "windows_logs": ["login_success"],
+      "follow_on_activity": ["resource_access"],
+      "time_window_minutes": 30,
+      "severity": "critical"
+    }
+  },
+  "risk_score": 90,
+  "severity": "critical",
+  "mitre_attack": [
+    {
+      "technique_id": "T1566.002",
+      "technique_name": "Phishing: Spearphishing Link"
+    },
+    {
+      "technique_id": "T1056",
+      "technique_name": "Input Capture"
+    },
+    {
+      "technique_id": "T1078",
+      "technique_name": "Valid Accounts"
+    },
+    {
+      "technique_id": "T1534",
+      "technique_name": "Internal Spearphishing"
+    }
+  ],
+  "ioc_examples": {
+    "malicious_domains": [
+      "office365-secure-login.com",
+      "micr0soft-security.com",
+      "account-verification365.net"
+    ],
+    "suspicious_urls": [
+      "https://office365-secure-login.com/verify",
+      "https://account-verification365.net/login",
+      "https://micr0soft-security.com/auth"
+    ],
+    "attacker_ips": ["198.51.100.77", "198.51.100.81"],
+    "sender_emails": [
+      "support@micr0soft-security.com",
+      "security@office365-alerts.net"
+    ],
+    "observed_indicators": [
+      "Unexpected mailbox verification request",
+      "Successful login from unusual location",
+      "Outbound connection to phishing infrastructure",
+      "Access to sensitive resources immediately after login"
+    ]
+  },
+  "recommended_actions": [
+    {
+      "priority": "critical",
+      "action": "Disable Compromised Account",
+      "description": "Temporarily disable the affected account to prevent further unauthorized access."
+    },
+    {
+      "priority": "critical",
+      "action": "Reset Credentials",
+      "description": "Force password reset and revoke active authentication sessions."
+    },
+    {
+      "priority": "critical",
+      "action": "Enable MFA",
+      "description": "Require multi-factor authentication for all affected and privileged accounts."
+    },
+    {
+      "priority": "high",
+      "action": "Block Malicious Domains",
+      "description": "Block phishing domains and URLs at firewall, proxy, and DNS layers."
+    },
+    {
+      "priority": "high",
+      "action": "Investigate Resource Access",
+      "description": "Review accessed resources and determine whether data exposure occurred."
+    },
+    {
+      "priority": "medium",
+      "action": "User Awareness Training",
+      "description": "Provide phishing awareness training to affected users and departments."
+    }
+  ],
+  "executive_summary": "A critical phishing attack successfully targeted a corporate employee using a spoofed Microsoft 365 email. The victim clicked a malicious link and entered credentials into a fraudulent login page, resulting in credential theft. IDS systems detected phishing-related activity while firewall logs recorded outbound connections to malicious infrastructure. Shortly afterward, a successful login occurred from an external attacker IP address, followed by access to sensitive corporate resources. The incident has been assigned a risk score of 90 due to confirmed credential compromise and unauthorized resource access. Immediate remediation includes account disablement, credential reset, MFA enforcement, and blocking of identified phishing infrastructure."
+}

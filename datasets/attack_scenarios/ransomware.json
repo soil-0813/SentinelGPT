@@ -1,0 +1,263 @@
+{
+  "scenario_id": "RANSOMWARE_001",
+  "attack_name": "Enterprise Ransomware Attack",
+  "description": "A ransomware attack originating from a malicious email attachment resulted in malware execution on an employee workstation. The malware established command-and-control communication, performed internal reconnaissance, moved laterally across the network using compromised credentials, encrypted critical business files on multiple systems, and displayed a ransom demand. IDS alerts, firewall logs, and Windows file activity collectively indicate a coordinated ransomware operation impacting enterprise resources.",
+  "attack_steps": [
+    {
+      "step_id": 1,
+      "timestamp": "2026-06-05T08:12:15Z",
+      "event": "Initial Compromise",
+      "description": "User opened a malicious email attachment disguised as an invoice document.",
+      "user": "finance.user",
+      "host": "FINANCE-PC01",
+      "attachment_name": "Invoice_June_2026.docm",
+      "event_type": "phishing_attachment_execution"
+    },
+    {
+      "step_id": 2,
+      "timestamp": "2026-06-05T08:13:42Z",
+      "event": "Malware Execution",
+      "description": "Macro executed PowerShell payload which downloaded ransomware binary.",
+      "host": "FINANCE-PC01",
+      "process": "powershell.exe",
+      "download_url": "http://update-secure-portal.com/payload.exe",
+      "malware_family": "BlackCipher",
+      "event_type": "malware_execution"
+    },
+    {
+      "step_id": 3,
+      "timestamp": "2026-06-05T08:14:20Z",
+      "event": "IDS Malware Detection",
+      "description": "IDS detected malicious PowerShell activity and ransomware indicators.",
+      "source_host": "FINANCE-PC01",
+      "alert_type": "malware_activity",
+      "severity": "critical",
+      "detection_rule": "ET MALWARE PowerShell Download Cradle"
+    },
+    {
+      "step_id": 4,
+      "timestamp": "2026-06-05T08:18:11Z",
+      "event": "Command and Control Communication",
+      "description": "Compromised host initiated outbound communication with known malicious infrastructure.",
+      "source_ip": "10.10.20.15",
+      "destination_ip": "185.212.44.91",
+      "destination_domain": "update-secure-portal.com",
+      "protocol": "HTTPS",
+      "event_type": "c2_communication"
+    },
+    {
+      "step_id": 5,
+      "timestamp": "2026-06-05T08:27:53Z",
+      "event": "Credential Harvesting",
+      "description": "Malware attempted credential dumping from memory.",
+      "host": "FINANCE-PC01",
+      "tool": "Credential Dumper",
+      "event_type": "credential_access"
+    },
+    {
+      "step_id": 6,
+      "timestamp": "2026-06-05T08:39:21Z",
+      "event": "Lateral Movement",
+      "description": "Attacker used harvested credentials to access file server and additional workstations.",
+      "source_host": "FINANCE-PC01",
+      "target_host": "FILESERVER01",
+      "protocol": "SMB",
+      "event_type": "lateral_movement"
+    },
+    {
+      "step_id": 7,
+      "timestamp": "2026-06-05T08:52:07Z",
+      "event": "Mass File Access",
+      "description": "Unusual access to thousands of files detected across shared drives.",
+      "host": "FILESERVER01",
+      "files_accessed": 12487,
+      "event_type": "bulk_file_access"
+    },
+    {
+      "step_id": 8,
+      "timestamp": "2026-06-05T09:03:16Z",
+      "event": "File Encryption",
+      "description": "Ransomware encrypted documents, spreadsheets, databases, and archives.",
+      "host": "FILESERVER01",
+      "encrypted_files": 10842,
+      "file_extension": ".blackcipher",
+      "event_type": "file_encryption"
+    },
+    {
+      "step_id": 9,
+      "timestamp": "2026-06-05T09:07:44Z",
+      "event": "Ransom Note Deployment",
+      "description": "Ransom note created on affected systems demanding cryptocurrency payment.",
+      "host": "FILESERVER01",
+      "ransom_note": "README_RESTORE_FILES.txt",
+      "payment_amount_btc": 12.5,
+      "event_type": "ransom_demand"
+    }
+  ],
+  "correlation_rules": {
+    "rule_1": {
+      "rule_id": "CORR_RW_001",
+      "name": "IDS Malware Alert Correlation",
+      "description": "Correlates IDS malware alerts with suspicious endpoint activity.",
+      "ids_alerts": ["malware_activity", "ransomware_behavior"],
+      "time_window_minutes": 30,
+      "severity": "high"
+    },
+    "rule_2": {
+      "rule_id": "CORR_RW_002",
+      "name": "Firewall Command and Control Detection",
+      "description": "Correlates outbound traffic to known malicious IPs and domains.",
+      "firewall_logs": ["outbound_connection"],
+      "indicators": ["malicious_ip", "malicious_domain"],
+      "time_window_minutes": 60,
+      "severity": "critical"
+    },
+    "rule_3": {
+      "rule_id": "CORR_RW_003",
+      "name": "Lateral Movement Detection",
+      "description": "Identifies suspicious SMB authentication and movement between hosts.",
+      "windows_logs": ["login_success", "network_share_access"],
+      "time_window_minutes": 45,
+      "severity": "critical"
+    },
+    "rule_4": {
+      "rule_id": "CORR_RW_004",
+      "name": "Mass File Modification Activity",
+      "description": "Detects abnormal volume of file access and modification events.",
+      "windows_logs": ["file_access", "file_modification"],
+      "threshold": {
+        "files_modified": 1000,
+        "time_window_minutes": 15
+      },
+      "severity": "critical"
+    },
+    "rule_5": {
+      "rule_id": "CORR_RW_005",
+      "name": "Encryption and Ransom Note Correlation",
+      "description": "Correlates encryption activity with ransom note creation.",
+      "windows_logs": ["file_encryption", "ransom_note_creation"],
+      "time_window_minutes": 10,
+      "severity": "critical"
+    }
+  },
+  "risk_score": 98,
+  "severity": "critical",
+  "mitre_attack": [
+    {
+      "technique_id": "T1566.001",
+      "technique_name": "Phishing: Spearphishing Attachment",
+      "description": "Malicious email attachment used for initial compromise."
+    },
+    {
+      "technique_id": "T1059.001",
+      "technique_name": "Command and Scripting Interpreter: PowerShell",
+      "description": "PowerShell used to download and execute malware."
+    },
+    {
+      "technique_id": "T1105",
+      "technique_name": "Ingress Tool Transfer",
+      "description": "Malware payload downloaded from external infrastructure."
+    },
+    {
+      "technique_id": "T1003",
+      "technique_name": "OS Credential Dumping",
+      "description": "Credential harvesting from memory."
+    },
+    {
+      "technique_id": "T1021.002",
+      "technique_name": "Remote Services: SMB",
+      "description": "Lateral movement through SMB shares."
+    },
+    {
+      "technique_id": "T1486",
+      "technique_name": "Data Encrypted for Impact",
+      "description": "Files encrypted to disrupt business operations."
+    },
+    {
+      "technique_id": "T1490",
+      "technique_name": "Inhibit System Recovery",
+      "description": "Recovery mechanisms targeted before encryption."
+    }
+  ],
+  "ioc_examples": {
+    "malware_hashes": [
+      {
+        "sha256": "a3f5d2d1e1c0f44dcb5d1f2a9dba6f23f3b1f4e8c0d7b5c1a6d7e9f0b1c2d3e4",
+        "malware_family": "BlackCipher",
+        "confidence": "high"
+      }
+    ],
+    "suspicious_ips": [
+      {
+        "ip_address": "185.212.44.91",
+        "country": "Russia",
+        "reputation_score": 98,
+        "threat_type": "command_and_control"
+      },
+      {
+        "ip_address": "91.204.226.71",
+        "country": "Romania",
+        "reputation_score": 95,
+        "threat_type": "malware_distribution"
+      }
+    ],
+    "suspicious_domains": [
+      "update-secure-portal.com",
+      "secure-sync-cloud.net",
+      "backup-recovery-center.org"
+    ],
+    "file_extensions": [".blackcipher"],
+    "ransom_note_files": ["README_RESTORE_FILES.txt"]
+  },
+  "recommended_actions": [
+    {
+      "priority": "critical",
+      "action": "Isolate Affected Systems",
+      "description": "Immediately disconnect infected endpoints and servers from the network.",
+      "timeline": "Immediately"
+    },
+    {
+      "priority": "critical",
+      "action": "Contain Lateral Movement",
+      "description": "Disable compromised accounts and block SMB communication where possible.",
+      "timeline": "Immediately"
+    },
+    {
+      "priority": "critical",
+      "action": "Block Malicious Infrastructure",
+      "description": "Block identified malicious IP addresses and domains at firewall and DNS layers.",
+      "timeline": "Immediately"
+    },
+    {
+      "priority": "high",
+      "action": "Preserve Forensic Evidence",
+      "description": "Collect memory dumps, logs, malware samples, and system snapshots.",
+      "timeline": "Within 1 hour"
+    },
+    {
+      "priority": "high",
+      "action": "Validate Backups",
+      "description": "Verify integrity and availability of offline and immutable backups.",
+      "timeline": "Within 2 hours"
+    },
+    {
+      "priority": "high",
+      "action": "Begin Recovery Process",
+      "description": "Restore affected systems from clean backups after eradication.",
+      "timeline": "Within 4 hours"
+    },
+    {
+      "priority": "medium",
+      "action": "Reset Credentials",
+      "description": "Reset passwords for all potentially compromised accounts.",
+      "timeline": "Within 1 business day"
+    },
+    {
+      "priority": "medium",
+      "action": "Enhance Monitoring",
+      "description": "Deploy enhanced detection rules for ransomware indicators and persistence mechanisms.",
+      "timeline": "Within 1 business day"
+    }
+  ],
+  "executive_summary": "On June 5, 2026, SentinelGPT detected a critical ransomware incident originating from a malicious email attachment opened by a finance department employee. The malware executed PowerShell commands, established communication with known malicious infrastructure, harvested credentials, and moved laterally to enterprise file servers. More than 10,000 files were encrypted and a ransom demand was issued. Correlated IDS alerts, firewall traffic, and Windows file activity confirmed a coordinated ransomware attack. The incident received a risk score of 98/100 due to active encryption, lateral movement, business impact, and potential data loss. Immediate containment, system isolation, backup validation, and recovery operations are required to minimize operational disruption and restore affected services."
+}
