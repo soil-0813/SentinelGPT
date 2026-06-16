@@ -3,17 +3,20 @@ from typing import List, Dict
 
 router = APIRouter()
 
-# Temporary mock data
-# Later this will come from correlation engine + RAG + LLM
-
+# Perfect match schema for AlertCard.jsx
 mock_alerts = [
     {
-        "alert_id": "ALT-001",
+        "id": "ALT-001",
         "title": "Brute Force Attack Detected",
-        "severity": "Critical",
+        "description": "Multiple failed SSH login attempts followed by a successful execution flag.",
+        "severity": "critical",  # Lowercase to match your ICONS mapping object
+        "source": "Windows Log Engine",
+        "ip": "192.168.1.50",
+        "mitre": "T1110",
+        "timestamp": "2026-06-17T00:00:00Z",
+        "status": "open",  # THIS FIXES THE CRASH!
         "severity_score": 9.3,
-        "timestamp": "2026-06-01T10:15:00Z",
-
+        
         "attack_reasoning_graph": {
             "nodes": [
                 "Failed Login Attempts",
@@ -25,7 +28,6 @@ mock_alerts = [
                 ["Successful Login", "PowerShell Execution"]
             ]
         },
-
         "alternative_hypotheses": [
             {
                 "name": "Password Spraying",
@@ -36,7 +38,6 @@ mock_alerts = [
                 "confidence": 6
             }
         ],
-
         "severity_explanation": {
             "score": 9.3,
             "reasons": [
@@ -54,12 +55,10 @@ mock_alerts = [
                 }
             ]
         },
-
         "mitre_mapping": [
             "T1110",
             "T1059"
         ],
-
         "mitigation": [
             "Block source IP",
             "Reset affected account password",
@@ -72,21 +71,13 @@ mock_alerts = [
 
 @router.get("/alerts")
 def get_alerts():
-
-    return {
-        "count": len(mock_alerts),
-        "alerts": mock_alerts
-    }
+    # Return the clean, raw list array exactly like your dashboard needs!
+    return mock_alerts
 
 
 @router.get("/alerts/{alert_id}")
 def get_alert(alert_id: str):
-
     for alert in mock_alerts:
-
-        if alert["alert_id"] == alert_id:
+        if alert["id"] == alert_id:
             return alert
-
-    return {
-        "error": "Alert not found"
-    }
+    return {"error": "Alert not found"}
