@@ -34,13 +34,51 @@ mock_reports = [
     }
 ]
 
-
 @router.get("/reports")
 def get_reports():
-    # Return raw list directly so frontend maps it cleanly
-    return mock_reports
 
+    from app.database.db import get_all_incidents
+    import json
 
+    incidents = get_all_incidents()
+
+    reports = []
+
+    for idx, inc in enumerate(incidents):
+
+        attack_type = inc[1]
+        severity = str(inc[2]).lower()
+
+        try:
+            data = json.loads(inc[4])
+        except Exception:
+            data = {}
+
+        reports.append({
+            "id": f"REP-{idx+1:03}",
+            "title": f"{attack_type} Remediation",
+            "type": "incident",
+            "severity": severity,
+            "analyst": "SentinelGPT Engine",
+            "created": "2026-06-23T00:00:00Z",
+            "summary": f"SentinelGPT detected a {attack_type} incident through automated log correlation.",
+            "sections": {
+                "Executive_Summary":
+                    f"A {attack_type} attack was detected from correlated security logs.",
+
+                "Technical_Analysis":
+                    f"The detection engine identified indicators consistent with {attack_type}.",
+
+                "Remediation_Steps":
+                    "1. Investigate affected systems.\n"
+                    "2. Block malicious IP addresses.\n"
+                    "3. Reset compromised credentials.\n"
+                    "4. Monitor for recurrence."
+            }
+        })
+
+    return reports
+    
 @router.post("/reports/generate")
 def generate_report(payload: dict):
     # Fallback to prevent crash when clicking 'New Report' button

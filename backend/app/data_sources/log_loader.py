@@ -50,7 +50,7 @@ def load_all_logs() -> List[Dict[str, Any]]:
         logger.info("Loading Windows Logs")
 
         windows_logs = read_windows_logs(
-            "datasets/logs/windows_logs.json"
+            "../datasets/logs/windows_logs.json"
         )
 
         all_logs.extend(windows_logs)
@@ -72,7 +72,7 @@ def load_all_logs() -> List[Dict[str, Any]]:
         logger.info("Loading Firewall Logs")
 
         firewall_logs = load_firewall_logs(
-            "datasets/logs/firewall_logs.json"
+            "../datasets/logs/firewall_logs.json"
         )
 
         all_logs.extend(firewall_logs)
@@ -94,7 +94,7 @@ def load_all_logs() -> List[Dict[str, Any]]:
         logger.info("Loading IDS Alerts")
 
         ids_alerts = load_ids_alerts(
-            "datasets/logs/ids_alerts.json"
+            "../datasets/logs/ids_alerts.json"
         )
 
         all_logs.extend(ids_alerts)

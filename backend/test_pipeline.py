@@ -1,5 +1,23 @@
-from app.data_sources.log_loader import load_all_logs
 import uuid
+
+from app.data_sources.log_loader import load_all_logs
+
+from app.preprocessing.parser import parse_logs
+from app.preprocessing.cleaner import clean_logs
+from app.preprocessing.log_normalizer import normalize_logs
+
+from app.preprocessing.feature_extractor import extract_features
+
+from app.correlation.event_correlator import correlate_events
+
+from app.correlation.timeline_builder import build_timeline
+from app.correlation.severity_scorer import score_attack
+
+from app.database.db import (
+    initialize_database,
+    save_incident,
+    get_all_incidents
+)
 
 def main():
 

@@ -1,83 +1,112 @@
 from fastapi import APIRouter
-from typing import List, Dict
+import json
+
+from app.database.db import get_all_incidents
 
 router = APIRouter()
-
-# Perfect match schema for AlertCard.jsx
-mock_alerts = [
-    {
-        "id": "ALT-001",
-        "title": "Brute Force Attack Detected",
-        "description": "Multiple failed SSH login attempts followed by a successful execution flag.",
-        "severity": "critical",  # Lowercase to match your ICONS mapping object
-        "source": "Windows Log Engine",
-        "ip": "192.168.1.50",
-        "mitre": "T1110",
-        "timestamp": "2026-06-17T00:00:00Z",
-        "status": "open",  # THIS FIXES THE CRASH!
-        "severity_score": 9.3,
-        
-        "attack_reasoning_graph": {
-            "nodes": [
-                "Failed Login Attempts",
-                "Successful Login",
-                "PowerShell Execution"
-            ],
-            "edges": [
-                ["Failed Login Attempts", "Successful Login"],
-                ["Successful Login", "PowerShell Execution"]
-            ]
-        },
-        "alternative_hypotheses": [
-            {
-                "name": "Password Spraying",
-                "confidence": 12
-            },
-            {
-                "name": "Misconfigured Application",
-                "confidence": 6
-            }
-        ],
-        "severity_explanation": {
-            "score": 9.3,
-            "reasons": [
-                {
-                    "factor": "30 Failed Logins",
-                    "impact": 3.0
-                },
-                {
-                    "factor": "Successful Login",
-                    "impact": 3.0
-                },
-                {
-                    "factor": "PowerShell Execution",
-                    "impact": 3.3
-                }
-            ]
-        },
-        "mitre_mapping": [
-            "T1110",
-            "T1059"
-        ],
-        "mitigation": [
-            "Block source IP",
-            "Reset affected account password",
-            "Enable MFA",
-            "Review PowerShell activity"
-        ]
-    }
-]
 
 
 @router.get("/alerts")
 def get_alerts():
-    # Return the clean, raw list array exactly like your dashboard needs!
-    return mock_alerts
+
+    incidents = get_all_incidents()
+
+    alerts = []
+
+    for inc in incidents:
+
+        try:
+            incident_id = inc[0]
+            attack_type = inc[1]
+            severity = inc[2].lower()
+            risk_score = inc[3]
+
+            incident_data = json.loads(inc[4])
+
+            source_ip = incident_data.get(
+                "source_ip",
+                "Unknown"
+            )
+
+            timeline = incident_data.get(
+                "timeline",
+                []
+            )
+
+            timestamp = (
+                timeline[0]["timestamp"]
+                if timeline
+                else "2026-01-01T00:00:00Z"
+            )
+
+            reasoning = incident_data.get(
+                "reasoning",
+                []
+            )
+
+            description = (
+                reasoning[0]
+                if reasoning
+                else attack_type
+            )
+
+            mitre_mapping = {
+                "Brute Force Attack": "T1110",
+                "Port Scan": "T1046",
+                "Malware Infection": "T1204",
+                "Ransomware Attack": "T1486",
+                "Phishing Attack": "T1566",
+                "Credential Attack": "T1110",
+                "Lateral Movement": "T1021"
+            }
+
+            alerts.append({
+
+                "id": incident_id,
+
+                "title": attack_type,
+
+                "description": description,
+
+                "severity": severity,
+
+                "source": "SentinelGPT Correlation Engine",
+
+                "ip": source_ip,
+
+                "mitre": mitre_mapping.get(
+                    attack_type,
+                    "T0000"
+                ),
+
+                "timestamp": timestamp,
+
+                "status": "open",
+
+                "severity_score": risk_score
+
+            })
+
+        except Exception as e:
+
+            print(
+                f"Error converting incident "
+                f"to alert: {e}"
+            )
+
+    return alerts
 
 
 @router.get("/alerts/{alert_id}")
 def get_alert(alert_id: str):
-    for alert in mock_alerts:
+
+    alerts = get_alerts()
+
+    for alert in alerts:
+
         if alert["id"] == alert_id:
             return alert
-    return {"error": "Alert not found"}
+
+    return {
+        "error": "Alert not found"
+    }
